@@ -1,0 +1,268 @@
+import os
+import argparse
+import time
+import numpy as np
+import torch
+import torch.nn as nn
+from torch.utils.data import DataLoader
+from torch.utils.data import Dataset, DataLoader
+import torch.nn.functional as F
+import argparse
+from torchmetrics import Accuracy
+from torch.nn.parameter import Parameter
+import geotorch
+import math
+import torch.autograd.functional as AGF
+from torch.utils.data import Subset
+
+from pytorch_lightning import LightningModule
+import pytorch_lightning as pl
+from torchdiffeq import odeint_adjoint as odeint
+
+# provide the same paths as before
+train_savepath = '/home/mzakwan/neurips2023/MNIST/models/MNIST_train_resnet_final.npz'
+test_savepath = '/home/mzakwan/neurips2023/MNIST/models/MNIST_test_resnet_final.npz'
+device = 'cuda' 
+
+class DensemnistDatasetTrain(Dataset):
+    def __init__(self):
+        """
+        """
+        npzfile = np.load(train_savepath)
+
+        self.x = npzfile['x_save']
+        self.y = npzfile['y_save']
+
+    def __len__(self):
+        return len(self.x)
+
+    def __getitem__(self, idx):
+        x = self.x[idx, ...]
+        y = self.y[idx]
+
+        return x, y
+
+
+class DensemnistDatasetTest(Dataset):
+    def __init__(self):
+        """
+        """
+        npzfile = np.load(test_savepath)
+
+        self.x = npzfile['x_save']
+        self.y = npzfile['y_save']
+
+    def __len__(self):
+        return len(self.x)
+
+    def __getitem__(self, idx):
+        x = self.x[idx, ...]
+        y = self.y[idx]
+
+        return x, y
+    
+
+def makedirs(dirname):
+    if not os.path.exists(dirname):
+        os.makedirs(dirname)
+
+def str2bool(v):
+    if isinstance(v, bool):
+        return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+
+
+def get_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--batch-size', default=128, type=int)
+    parser.add_argument('--data-dir', default='../cifar-data', type=str)
+    parser.add_argument('--epsilon', default=8, type=int)
+    parser.add_argument('--out-dir', default='train_fgsm_output', type=str, help='Output directory')
+    parser.add_argument('--seed', default=0, type=int, help='Random seed')
+    parser.add_argument("--run_name", type=str, default="linear_no_node_mlp")
+    parser.add_argument('--regularizer_weight', type=float, default= 1.0)
+    parser.add_argument('--reg_flag', type=str2bool, default=True)
+    parser.add_argument('--max_epochs', type=int, default=20)
+    parser.add_argument('--gpu_index', type=int, nargs='+', default=[2])
+    return parser.parse_args()
+
+
+args = get_args()   
+endtime = 1.0
+fc_dim = 64
+
+# Let us define neural nets 
+
+class ConcatFC(nn.Module):
+
+    def __init__(self, dim_in, dim_out):
+        super(ConcatFC, self).__init__()
+        self._layer = nn.Linear(dim_in, dim_out)
+
+    def forward(self, t, x):
+        return self._layer(x)
+
+
+
+class newLinear(nn.Module):
+    def __init__(self, in_features, out_features, bias=True):
+        super(newLinear, self).__init__()
+        self.in_features = in_features
+        self.out_features = out_features
+        self.weight = Parameter(torch.Tensor(in_features,out_features))
+        if bias:
+            self.bias = Parameter(torch.Tensor(out_features))
+        else:
+            self.register_parameter('bias', None)
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        nn.init.kaiming_uniform_(self.weight, a=math.sqrt(5))
+        if self.bias is not None:
+            fan_in, _ = nn.init._calculate_fan_in_and_fan_out(self.weight)
+            bound = 1 / math.sqrt(fan_in)
+            nn.init.uniform_(self.bias, -bound, bound)
+
+    def forward(self, input):
+        return F.linear(input, self.weight.T, self.bias)
+
+    def extra_repr(self) -> str:
+        return 'in_features={}, out_features={}, bias={}'.format(
+            self.in_features, self.out_features, self.bias is not None
+        )
+
+class ORTHFC(nn.Module):
+    def __init__(self, dimin, dimout, bias):
+        super(ORTHFC, self).__init__()
+        if dimin >= dimout:
+            self.linear = newLinear(dimin, dimout,  bias=bias)
+        else:
+            self.linear = nn.Linear(dimin, dimout,  bias=bias)
+        geotorch.orthogonal(self.linear, "weight")
+
+    def forward(self, x):
+        return self.linear(x)
+    
+class MLP_OUT_ORT(nn.Module):
+    def __init__(self):
+        super(MLP_OUT_ORT, self).__init__()
+        self.fc0 = ORTHFC(fc_dim, 10, False)#nn.Linear(fc_dim, 10)
+    def forward(self, input_):
+        h1 = self.fc0(input_)
+        return h1
+
+class MLP_OUT_BALL(nn.Module):
+    def __init__(self):
+        super(MLP_OUT_BALL, self).__init__()
+        self.fc0 = nn.Linear(fc_dim, 10, bias=False)
+    def forward(self, input_):
+        h1 = self.fc0(input_)
+        return h1  
+    
+class MLP_OUT_LINEAR(nn.Module):
+    def __init__(self):
+        super(MLP_OUT_LINEAR, self).__init__()
+        self.fc0 = nn.Linear(fc_dim, 10, bias=False)
+    def forward(self, input_):
+        h1 = self.fc0(input_)
+        return h1  
+
+tol = 1e-7
+
+class vanilla_mlp(nn.Module):
+    def __init__(self):
+        super(vanilla_mlp, self).__init__()
+        self.fc0 = nn.Linear(64, 64, bias=False)
+    def forward(self, input_):
+        h1 = self.fc0(input_)
+        return h1  
+    
+
+feature_layers = vanilla_mlp()
+fc_layers = MLP_OUT_LINEAR()
+
+for param in fc_layers.parameters():
+    param.requires_grad = False
+
+model = nn.Sequential(feature_layers, fc_layers).to(device)
+
+class ImageClassifier_global(LightningModule):
+        def __init__(self, regularizer_weight,reg_flag):
+            super().__init__()
+            self.save_hyperparameters()
+            self.net = model
+            self.reg_flag = reg_flag
+            self.test_acc = Accuracy(task="multiclass", num_classes=10)
+            self.loss_func = nn.CrossEntropyLoss()
+            self.regularizer_weight = regularizer_weight
+
+        def forward(self,x):
+            return self.net(x)
+        
+        def training_step(self, batch, batch_idx):
+            x, y = batch
+            logits = self.forward(x)
+            loss = self.loss_func(logits, y.long()) 
+            self.log("total_loss", loss, prog_bar=True)
+            return loss
+
+        def test_step(self, batch, batch_idx):
+            x, y = batch
+            logits = self.forward(x)
+            loss = self.loss_func(logits, y.long())
+            acc = self.test_acc(logits, y)
+            self.log("test_acc", acc)
+            self.log("test_loss", loss)
+
+        def configure_optimizers(self):
+            optimizer = torch.optim.Adam(feature_layers.parameters(), lr=1e-2, eps=1e-3, amsgrad=True)
+            return [optimizer]
+
+if __name__ == "__main__":
+
+    seed = args.seed
+    seed = np.random.randint(0, 1000)
+    pl.seed_everything(0)
+
+    torch.set_float32_matmul_precision('medium')
+
+    train_loader =  DataLoader(DensemnistDatasetTrain(),
+            batch_size=args.batch_size,
+            shuffle=True, num_workers=32
+        )
+        
+    test_loader =  DataLoader(DensemnistDatasetTest(),
+            batch_size=args.batch_size,
+            shuffle=True, num_workers=32
+        )    
+    
+    random_train_idx = np.random.choice(np.array(range(len(DensemnistDatasetTrain()))),replace=False, size=15000)
+    train_subset = Subset(DensemnistDatasetTrain(), random_train_idx)
+    train_loader_subset = DataLoader(train_subset, shuffle=True, batch_size=args.batch_size)
+
+    #Defining the logger 
+
+    model_ode = ImageClassifier_global(
+            reg_flag=args.reg_flag,
+            regularizer_weight=args.regularizer_weight
+        )
+
+    trainer = pl.Trainer(
+        max_epochs=args.max_epochs,
+        accelerator='gpu',
+        devices=args.gpu_index,
+        num_nodes=1,
+    )
+    
+    trainer.fit(model_ode, train_loader)
+    trainer.save_checkpoint(
+            "/home/mzakwan/neurips2023/MNIST/EXP-NO_NODE/resnetfinal/"+args.run_name+"_lightning_model.ckpt")
+    time.sleep(5)
+    train_result = trainer.test(model_ode, train_loader_subset)
+    test_result = trainer.test(model_ode, test_loader)
+
