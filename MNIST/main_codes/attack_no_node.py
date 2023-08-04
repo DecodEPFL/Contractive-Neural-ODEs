@@ -9,33 +9,33 @@ from resnet import ResNet18
 import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
 
-folder_savemodel = '/home/mzakwan/neurips2023/MNIST/models' # feature extractor
-# str_reg_suf = '/home/mzakwan/neurips2023/MNIST/EXP-Global/resnetfinal/orthogonal_final_lightning_model.ckpt'  # Orthogonal and contarctive
-# str_reg_suf= '/home/mzakwan/neurips2023/MNIST/EXP-Global/resnetfinal/orthogonal_node_lightning_model.ckpt' # Orthogonal and non-contractive
-# str_reg_suf = '/home/mzakwan/neurips2023/MNIST/EXP-Global/resnetfinal/linear_final_lightning_model.ckpt' # linear and contractive
-# str_reg_suf = '/home/mzakwan/neurips2023/MNIST/EXP-Global/resnetfinal/linear_node_lightning_model.ckpt' # linear and non-contractive
-# str_reg_suf = '/home/mzakwan/neurips2023/MNIST/EXP-Local/resnetfinal/orthogonal_cnode_local_test_lightning_model.ckpt'
+folder_savemodel = './neurips2023/MNIST/models' # feature extractor
+# str_reg_suf = './neurips2023/MNIST/EXP-Global/resnetfinal/orthogonal_final_lightning_model.ckpt'  # Orthogonal and contarctive
+# str_reg_suf= './neurips2023/MNIST/EXP-Global/resnetfinal/orthogonal_node_lightning_model.ckpt' # Orthogonal and non-contractive
+# str_reg_suf = './neurips2023/MNIST/EXP-Global/resnetfinal/linear_final_lightning_model.ckpt' # linear and contractive
+# str_reg_suf = './neurips2023/MNIST/EXP-Global/resnetfinal/linear_node_lightning_model.ckpt' # linear and non-contractive
+# str_reg_suf = './neurips2023/MNIST/EXP-Local/resnetfinal/orthogonal_cnode_local_test_lightning_model.ckpt'
 
 # Ablation studies w.r.t gamma
-# str_reg_suf = '/home/mzakwan/neurips2023/MNIST/EXP-Global/resnetfinal/orthogonal_gamma=0.01_lightning_model.ckpt'
-# str_reg_suf = '/home/mzakwan/neurips2023/MNIST/EXP-Global/resnetfinal/orthogonal_gamma=0.5_lightning_model.ckpt'
-# str_reg_suf = '/home/mzakwan/neurips2023/MNIST/EXP-Global/resnetfinal/orthogonal_gamma=1.0_lightning_model.ckpt'
-# str_reg_suf = '/home/mzakwan/neurips2023/MNIST/EXP-Global/resnetfinal/orthogonal_gamma=5.0_lightning_model.ckpt'
-# str_reg_suf = '/home/mzakwan/neurips2023/MNIST/EXP-Global/resnetfinal/orthogonal_gamma=10.0_lightning_model.ckpt'
+# str_reg_suf = './neurips2023/MNIST/EXP-Global/resnetfinal/orthogonal_gamma=0.01_lightning_model.ckpt'
+# str_reg_suf = './neurips2023/MNIST/EXP-Global/resnetfinal/orthogonal_gamma=0.5_lightning_model.ckpt'
+# str_reg_suf = './neurips2023/MNIST/EXP-Global/resnetfinal/orthogonal_gamma=1.0_lightning_model.ckpt'
+# str_reg_suf = './neurips2023/MNIST/EXP-Global/resnetfinal/orthogonal_gamma=5.0_lightning_model.ckpt'
+# str_reg_suf = './neurips2023/MNIST/EXP-Global/resnetfinal/orthogonal_gamma=10.0_lightning_model.ckpt'
 
 # Ablation Studies w.r.t. T
-# str_reg_suf = '/home/mzakwan/neurips2023/MNIST/EXP-Global/resnetfinal/orthogonal_T=0.1_lightning_model.ckpt'
-# str_reg_suf = '/home/mzakwan/neurips2023/MNIST/EXP-Global/resnetfinal/orthogonal_T=0.5_lightning_model.ckpt'
-# str_reg_suf = '/home/mzakwan/neurips2023/MNIST/EXP-Global/resnetfinal/orthogonal_T=1.0_lightning_model.ckpt'
-# str_reg_suf = '/home/mzakwan/neurips2023/MNIST/EXP-Global/resnetfinal/orthogonal_T=2.0_lightning_model.ckpt'
-# str_reg_suf = '/home/mzakwan/neurips2023/MNIST/EXP-Global/resnetfinal/orthogonal_T=5.0_lightning_model.ckpt'
-# str_reg_suf = '/home/mzakwan/neurips2023/MNIST/EXP-Global/resnetfinal/orthogonal_T=10.0_lightning_model.ckpt'
+# str_reg_suf = './neurips2023/MNIST/EXP-Global/resnetfinal/orthogonal_T=0.1_lightning_model.ckpt'
+# str_reg_suf = './neurips2023/MNIST/EXP-Global/resnetfinal/orthogonal_T=0.5_lightning_model.ckpt'
+# str_reg_suf = './neurips2023/MNIST/EXP-Global/resnetfinal/orthogonal_T=1.0_lightning_model.ckpt'
+# str_reg_suf = './neurips2023/MNIST/EXP-Global/resnetfinal/orthogonal_T=2.0_lightning_model.ckpt'
+# str_reg_suf = './neurips2023/MNIST/EXP-Global/resnetfinal/orthogonal_T=5.0_lightning_model.ckpt'
+# str_reg_suf = './neurips2023/MNIST/EXP-Global/resnetfinal/orthogonal_T=10.0_lightning_model.ckpt'
 
-str_reg_suf = '/home/mzakwan/neurips2023/MNIST/EXP-NO_NODE/resnetfinal/orthogonal_no_node_mlp_lightning_model.ckpt'
+str_reg_suf = './neurips2023/MNIST/EXP-NO_NODE/resnetfinal/orthogonal_no_node_mlp_lightning_model.ckpt'
 device = "cuda"
 fc_dim = 64
 
-fc_max = '/home/mzakwan/neurips2023/MNIST/main_codes/fc_maxrowdistance_64_10/ckpt.pth'
+fc_max = './neurips2023/MNIST/main_codes/fc_maxrowdistance_64_10/ckpt.pth'
 saved_temp = torch.load(fc_max,map_location=torch.device('cpu'))
 matrix_temp = saved_temp['matrix']
 

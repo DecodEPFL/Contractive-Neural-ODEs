@@ -20,8 +20,8 @@ import pytorch_lightning as pl
 from torchdiffeq import odeint_adjoint as odeint
 
 # provide the same paths as before
-train_savepath = '/home/mzakwan/neurips2023/MNIST/models/MNIST_train_resnet_final.npz'
-test_savepath = '/home/mzakwan/neurips2023/MNIST/models/MNIST_test_resnet_final.npz'
+train_savepath = './neurips2023/MNIST/models/MNIST_train_resnet_final.npz'
+test_savepath = './neurips2023/MNIST/models/MNIST_test_resnet_final.npz'
 device = 'cuda' 
 
 class DensemnistDatasetTrain(Dataset):
@@ -261,7 +261,7 @@ if __name__ == "__main__":
     
     trainer.fit(model_ode, train_loader)
     trainer.save_checkpoint(
-            "/home/mzakwan/neurips2023/MNIST/EXP-NO_NODE/resnetfinal/"+args.run_name+"_lightning_model.ckpt")
+            "./neurips2023/MNIST/EXP-NO_NODE/resnetfinal/"+args.run_name+"_lightning_model.ckpt")
     time.sleep(5)
     train_result = trainer.test(model_ode, train_loader_subset)
     test_result = trainer.test(model_ode, test_loader)

@@ -38,10 +38,10 @@ fc_dim = 64
 
 
 # folder_savemodel = './EXP/MNIST_resnet0'
-folder_savemodel = '/home/mzakwan/neurips2023/MNIST/models'
+folder_savemodel = './neurips2023/MNIST/models'
 
 
-folder = '/home/mzakwan/neurips2023/MNIST/EXP/resnetfct5_15/model.pth'
+folder = './neurips2023/MNIST/EXP/resnetfct5_15/model.pth'
 # folder = './EXP/resnetfc20_relu_final/model.pth'
 
 
@@ -241,7 +241,7 @@ device = 'cuda' #if torch.cuda.is_available() else 'cpu'
 # print(device)
 best_acc = 0  # best test accuracy
 start_epoch = 0  # start from epoch 0 or last checkpoint epoch
-fc_max = '/home/mzakwan/neurips2023/MNIST/main_codes/fc_maxrowdistance_64_10/ckpt.pth'
+fc_max = './neurips2023/MNIST/main_codes/fc_maxrowdistance_64_10/ckpt.pth'
 saved_temp = torch.load(fc_max,map_location=torch.device('cpu'))
 matrix_temp = saved_temp['matrix']
 print(matrix_temp.shape)

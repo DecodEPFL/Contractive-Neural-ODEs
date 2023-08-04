@@ -18,9 +18,9 @@ from torchdiffeq import odeint_adjoint as odeint
 from resnet import ResNet18
 
 # these paths are important and should be choosen appropriately. Train and test savepaths are where the dense features (64) will be saved.
-train_savepath = '/home/mzakwan/neurips2023/MNIST/models/MNIST_train_resnet_final.npz'
-test_savepath = '/home/mzakwan/neurips2023/MNIST/models/MNIST_test_resnet_final.npz'
-folder_savemodel = '/home/mzakwan/neurips2023/MNIST/models'
+train_savepath = './neurips2023/MNIST/models/MNIST_train_resnet_final.npz'
+test_savepath = './neurips2023/MNIST/models/MNIST_test_resnet_final.npz'
+folder_savemodel = './neurips2023/MNIST/models'
 
 # Fixing the seed in the beginning 
 def seed_torch(seed=0):

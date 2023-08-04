@@ -111,9 +111,9 @@ net = nn.Sequential(*net, fcs_temp, fc_layers).to(device)
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(net.parameters(), lr=0.0001, eps=1e-4, amsgrad=True)
 
-train_savepath = '/home/mzakwan/neurips2023/MNIST/models/MNIST_train_resnet_final.npz'
-test_savepath = '/home/mzakwan/neurips2023/MNIST/models/MNIST_test_resnet_final.npz'
-folder_savemodel = '/home/mzakwan/neurips2023/MNIST/models'
+train_savepath = './neurips2023/MNIST/models/MNIST_train_resnet_final.npz'
+test_savepath = './neurips2023/MNIST/models/MNIST_test_resnet_final.npz'
+folder_savemodel = './neurips2023/MNIST/models'
 
 def save_training_feature(model, dataset_loader):
     x_save = []
@@ -447,7 +447,7 @@ class DensemnistDatasetTest(Dataset):
 
         return x, y
 
-odesavefolder = '/home/mzakwan/neurips2023/MNIST/odemodels/dense_resnet_final'
+odesavefolder = './neurips2023/MNIST/odemodels/dense_resnet_final'
 makedirs(odesavefolder)
 odefunc = ODEfunc_mlp(0)
 
@@ -533,13 +533,13 @@ for itr in range(40 * int(batches_per_epoch)):
 endtime = 5
 layernum = 0
 
-folder = '/home/mzakwan/neurips2023/MNIST/odemodels/dense_resnet_final/model_15.pth'
+folder = './neurips2023/MNIST/odemodels/dense_resnet_final/model_15.pth'
 saved = torch.load(folder)
 print('load...', folder)
 statedic = saved['state_dict']
 args = saved['args']
 tol = 1e-5
-savefolder_fc = '/home/mzakwan/neurips2023/MNIST/EXP/resnetfct5_15/'
+savefolder_fc = './neurips2023/MNIST/EXP/resnetfct5_15/'
 print('saving...', savefolder_fc, ' endtime... ',endtime)
 
 

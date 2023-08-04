@@ -16,16 +16,16 @@ from resnet import ResNet18
 import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
 
-folder_savemodel = '/home/mzakwan/neurips2023/MNIST/models' # feature extractor
-str_reg_suf = '/home/mzakwan/neurips2023/MNIST/EXP-Local/resnetfinal/test_lightning_model.ckpt'  # global nodes
-# folder = '/home/mzakwan/neurips2023/MNIST/EXP2-SODEF/resnetfinal/model.pth'
+folder_savemodel = './neurips2023/MNIST/models' # feature extractor
+str_reg_suf = './neurips2023/MNIST/EXP-Local/resnetfinal/test_lightning_model.ckpt'  # global nodes
+# folder = './neurips2023/MNIST/EXP2-SODEF/resnetfinal/model.pth'
 # folder = './EXP/resnetfc20_relu_final/model.pth'
 
 
 device = "cuda"
 fc_dim = 64
 
-fc_max = '/home/mzakwan/neurips2023/MNIST/main_codes/fc_maxrowdistance_64_10/ckpt.pth'
+fc_max = './neurips2023/MNIST/main_codes/fc_maxrowdistance_64_10/ckpt.pth'
 saved_temp = torch.load(fc_max,map_location=torch.device('cpu'))
 matrix_temp = saved_temp['matrix']
 

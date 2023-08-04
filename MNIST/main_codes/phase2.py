@@ -20,9 +20,9 @@ from torch import linalg as LA
 time_df = 1
 
 # provide the same paths as before
-train_savepath = '/home/mzakwan/neurips2023/MNIST/models/MNIST_train_resnet_final.npz'
-test_savepath = '/home/mzakwan/neurips2023/MNIST/models/MNIST_test_resnet_final.npz'
-folder_savemodel = '/home/mzakwan/neurips2023/MNIST/models'
+train_savepath = './neurips2023/MNIST/models/MNIST_train_resnet_final.npz'
+test_savepath = './neurips2023/MNIST/models/MNIST_test_resnet_final.npz'
+folder_savemodel = './neurips2023/MNIST/models'
 device = 'cuda' 
 
 def makedirs(dirname):
@@ -323,8 +323,8 @@ class ODEBlock(nn.Module):
         self.odefunc.nfe = value
 
 # change the folder for savinf codes (ours) and SODEF
-# odesavefolder = '/home/mzakwan/neurips2023/MNIST/codemodels/dense_resnet_final'
-odesavefolder = '/home/mzakwan/neurips2023/MNIST/SODEFmodels/dense_resnet_final'
+# odesavefolder = './neurips2023/MNIST/codemodels/dense_resnet_final'
+odesavefolder = './neurips2023/MNIST/SODEFmodels/dense_resnet_final'
 makedirs(odesavefolder)
 odefunc = ODEfunc_mlp(0)
 

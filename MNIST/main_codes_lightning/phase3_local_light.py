@@ -21,8 +21,8 @@ import pytorch_lightning as pl
 from torchdiffeq import odeint
 from phase2_local_light import ImageClassifier_global
 # Same path as before
-train_savepath = '/home/mzakwan/neurips2023/MNIST/models/MNIST_train_resnet_final.npz'
-test_savepath = '/home/mzakwan/neurips2023/MNIST/models/MNIST_test_resnet_final.npz'
+train_savepath = './neurips2023/MNIST/models/MNIST_train_resnet_final.npz'
+test_savepath = './neurips2023/MNIST/models/MNIST_test_resnet_final.npz'
 
 
 
@@ -125,12 +125,12 @@ class DensemnistDatasetTest(Dataset):
         return x, y
     
 # change folder for sodef or CNODE
-str_reg_suf = '/home/mzakwan/neurips2023/MNIST/EXP-Local/resnetfinal/test_lightning_model.ckpt'  # global nodes
+str_reg_suf = './neurips2023/MNIST/EXP-Local/resnetfinal/test_lightning_model.ckpt'  # global nodes
 
 
 tol = 1e-5
-savefolder_fc = '/home/mzakwan/neurips2023/MNIST/EXP2/resnetfinal/'
-# savefolder_fc = '/home/mzakwan/neurips2023/MNIST/EXP2-SODEF/resnetfinal/'
+savefolder_fc = './neurips2023/MNIST/EXP2/resnetfinal/'
+# savefolder_fc = './neurips2023/MNIST/EXP2-SODEF/resnetfinal/'
 print('saving...', savefolder_fc, ' endtime... ',endtime)
 
 
@@ -249,7 +249,7 @@ if __name__ == "__main__":
     
     trainer.fit(model_ode, train_loader)
     trainer.save_checkpoint(
-            "/home/mzakwan/neurips2023/MNIST/EXP-Local/resnetfinal/"+args.run_name+"_lightning_model_fc.ckpt")
+            "./neurips2023/MNIST/EXP-Local/resnetfinal/"+args.run_name+"_lightning_model_fc.ckpt")
     import time
     time.sleep(5)
     train_result = trainer.test(model_ode, train_loader_subset)

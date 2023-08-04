@@ -10,18 +10,18 @@ from resnet import ResNet18
 import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
 
-folder_savemodel = '/home/mzakwan/neurips2023/MNIST/models' # feature extractor
-# str_reg_suf = '/home/mzakwan/neurips2023/MNIST/EXP-Global/resnetfinal/orthogonal_final_lightning_model.ckpt'  # Orthogonal and contarctive
-# str_reg_suf= '/home/mzakwan/neurips2023/MNIST/EXP-Global/resnetfinal/orthogonal_node_lightning_model.ckpt' # Orthogonal and non-contractive
-# str_reg_suf = '/home/mzakwan/neurips2023/MNIST/EXP-Global/resnetfinal/linear_final_lightning_model.ckpt' # linear and contractive
-# str_reg_suf = '/home/mzakwan/neurips2023/MNIST/EXP-Global/resnetfinal/linear_node_lightning_model.ckpt' # linear and non-contractive
-# str_reg_suf = '/home/mzakwan/neurips2023/MNIST/EXP-Global/resnetfinal/orthogonal_lognorm_lightning_model.ckpt'
-str_reg_suf = '/home/mzakwan/neurips2023/MNIST/EXP-Local/resnetfinal/orthogonal_cnode_local_lightning_model.ckpt' # linear + contractive + local
+folder_savemodel = './neurips2023/MNIST/models' # feature extractor
+# str_reg_suf = './neurips2023/MNIST/EXP-Global/resnetfinal/orthogonal_final_lightning_model.ckpt'  # Orthogonal and contarctive
+# str_reg_suf= './neurips2023/MNIST/EXP-Global/resnetfinal/orthogonal_node_lightning_model.ckpt' # Orthogonal and non-contractive
+# str_reg_suf = './neurips2023/MNIST/EXP-Global/resnetfinal/linear_final_lightning_model.ckpt' # linear and contractive
+# str_reg_suf = './neurips2023/MNIST/EXP-Global/resnetfinal/linear_node_lightning_model.ckpt' # linear and non-contractive
+# str_reg_suf = './neurips2023/MNIST/EXP-Global/resnetfinal/orthogonal_lognorm_lightning_model.ckpt'
+str_reg_suf = './neurips2023/MNIST/EXP-Local/resnetfinal/orthogonal_cnode_local_lightning_model.ckpt' # linear + contractive + local
 
 device = "cuda"
 fc_dim = 64
 
-fc_max = '/home/mzakwan/neurips2023/MNIST/main_codes/fc_maxrowdistance_64_10/ckpt.pth'
+fc_max = './neurips2023/MNIST/main_codes/fc_maxrowdistance_64_10/ckpt.pth'
 saved_temp = torch.load(fc_max,map_location=torch.device('cpu'))
 matrix_temp = saved_temp['matrix']
 
@@ -147,7 +147,7 @@ print(x_test.shape)
 
 # epsilon = 8/255
 # adversary = AutoAttack(model, norm='L2', eps=epsilon, version='standard',verbose=True,
-#                         log_path='/home/mzakwan/neurips2023/MNIST/logfile.txt')
+#                         log_path='./neurips2023/MNIST/logfile.txt')
 # X_adv = adversary.run_standard_evaluation(x_test, y_test, bs=128)
 
 model_backbone = nn.Sequential(*net,tempnn_,fcs_temp,fc_layersa).to(device)
@@ -159,7 +159,7 @@ print("Nominal Test Accuracy of Backbone: {}%".format( nom_test_acc_backbone * 1
 # print("Accuracy on adversarial test examples of Backbone(FGSM): {}%".format(accuracy_FGSM(model_backbone, testloader) * 100))
 epsilon = 8/255.0
 adversary = AutoAttack(model, norm='Linf', eps=epsilon, version='standard',verbose=True,
-                        log_path='/home/mzakwan/neurips2023/MNIST/logfile_backbone.txt')
+                        log_path='./neurips2023/MNIST/logfile_backbone.txt')
 X_adv = adversary.run_standard_evaluation(x_test, y_test, bs=128)
 # classifier_backbone = PyTorchClassifier(
 #     model=model_backbone,

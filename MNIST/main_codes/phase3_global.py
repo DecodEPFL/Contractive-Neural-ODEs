@@ -17,8 +17,8 @@ import argparse
 from torchdiffeq import odeint_adjoint as odeint
 
 # Same path as before
-train_savepath = '/home/mzakwan/neurips2023/MNIST/models/MNIST_train_resnet_final.npz'
-test_savepath = '/home/mzakwan/neurips2023/MNIST/models/MNIST_test_resnet_final.npz'
+train_savepath = './neurips2023/MNIST/models/MNIST_train_resnet_final.npz'
+test_savepath = './neurips2023/MNIST/models/MNIST_test_resnet_final.npz'
 
 
 def inf_generator(iterable):
@@ -106,17 +106,17 @@ class DensemnistDatasetTest(Dataset):
 ################################################ Phase 3, train final FC ################################################
  
 # change folder for sodef or CNODE
-# folder = '/home/mzakwan/neurips2023/MNIST/codemodels/dense_resnet_final/model_19.pth'
-# folder = '/home/mzakwan/neurips2023/MNIST/SODEFmodels/dense_resnet_final/model_19.pth'
-folder = '/home/mzakwan/neurips2023/MNIST/global_cnodemodels/dense_resnet_final/model_9.pth'
+# folder = './neurips2023/MNIST/codemodels/dense_resnet_final/model_19.pth'
+# folder = './neurips2023/MNIST/SODEFmodels/dense_resnet_final/model_19.pth'
+folder = './neurips2023/MNIST/global_cnodemodels/dense_resnet_final/model_9.pth'
 saved = torch.load(folder)
 print('load...', folder)
 statedic = saved['state_dict']
 args = saved['args']
 tol = 1e-5
-# savefolder_fc = '/home/mzakwan/neurips2023/MNIST/EXP2/resnetfinal/'
-# savefolder_fc = '/home/mzakwan/neurips2023/MNIST/EXP2-SODEF/resnetfinal/'
-savefolder_fc = '/home/mzakwan/neurips2023/MNIST/EXP-Global/resnetfinal/'
+# savefolder_fc = './neurips2023/MNIST/EXP2/resnetfinal/'
+# savefolder_fc = './neurips2023/MNIST/EXP2-SODEF/resnetfinal/'
+savefolder_fc = './neurips2023/MNIST/EXP-Global/resnetfinal/'
 print('saving...', savefolder_fc, ' endtime... ',endtime)
 
 class MLP_OUT(nn.Module):

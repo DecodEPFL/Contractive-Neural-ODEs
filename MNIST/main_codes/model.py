@@ -122,7 +122,7 @@ class MLP_OUT_LINEAR(nn.Module):
         return h1
 
     
-fc_max = '/home/mzakwan/neurips2023/MNIST/main_codes/fc_maxrowdistance_64_10/ckpt.pth'
+fc_max = './neurips2023/MNIST/main_codes/fc_maxrowdistance_64_10/ckpt.pth'
 saved_temp = torch.load(fc_max)
 
 # print(saved_temp)

@@ -18,9 +18,9 @@ from pytorch_lightning.loggers import WandbLogger
 import time
 
 
-train_savepath = '/home/mzakwan/neurips2023/MNIST/main_codes_lightning/dense_features/MNIST_train_resnet_final.npz'
-test_savepath = '/home/mzakwan/neurips2023/MNIST/main_codes_lightning/dense_features/MNIST_test_resnet_final.npz'
-folder_savemodel = '/home/mzakwan/neurips2023/MNIST/main_codes_lightning/dense_features'
+train_savepath = './neurips2023/MNIST/main_codes_lightning/dense_features/MNIST_train_resnet_final.npz'
+test_savepath = './neurips2023/MNIST/main_codes_lightning/dense_features/MNIST_test_resnet_final.npz'
+folder_savemodel = './neurips2023/MNIST/main_codes_lightning/dense_features'
 
 def seed_torch(seed=0):
     random.seed(seed)
@@ -219,7 +219,7 @@ if __name__ == "__main__":
     # train neural networks
     torch.set_float32_matmul_precision('medium')
     trainer.fit(model, trainloader)
-    trainer.save_checkpoint("/home/mzakwan/neurips2023/MNIST/main_codes_lightning/Checkpoints/"+args.run_name+"_lightning_model.ckpt")
+    trainer.save_checkpoint("./neurips2023/MNIST/main_codes_lightning/Checkpoints/"+args.run_name+"_lightning_model.ckpt")
     time.sleep(5)
 
     # # # test performance
@@ -236,7 +236,7 @@ if __name__ == "__main__":
             "test_acc": test_result[0]["test_acc"],
         })
 
-    wandb.log_artifact("/home/mzakwan/Ciquadro_Neural_Nets/MNIST_featurextractor/Checkpoints/"+args.run_name+"_lightning_model.ckpt",
+    wandb.log_artifact("./Ciquadro_Neural_Nets/MNIST_featurextractor/Checkpoints/"+args.run_name+"_lightning_model.ckpt",
                        name=args.run_name+"_lightning_model", type='model')
 
     wandb.finish()
